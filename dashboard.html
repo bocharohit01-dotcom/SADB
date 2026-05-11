@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        /* KEEPING YOUR ORIGINAL CSS EXACTLY */
+        body { font-family: Arial; margin: 0; background-color: #f4f6f9; }
+        .header { background-color: #007BFF; color: white; padding: 15px; text-align: center; font-size: 22px; }
+        .sidebar { width: 200px; height: 100vh; background-color: #2c3e50; color: white; position: fixed; padding-top: 20px; }
+        .sidebar a, .dropdown-btn { display: block; padding: 10px; color: white; text-decoration: none; background: none; border: none; width: 100%; text-align: left; cursor: pointer; font-size: 16px; box-sizing: border-box; }
+        .sidebar a:hover, .dropdown-btn:hover { background-color: #34495e; }
+        .dropdown-container { display: none; background-color: #243445; }
+        .dropdown-container a { padding-left: 25px; }
+        .main { margin-left: 200px; padding: 20px; }
+        .card { background: white; padding: 20px; margin: 10px; display: inline-block; width: 200px; border-radius: 10px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .stats { font-size: 2em; color: #007BFF; font-weight: bold; margin: 0; }
+        .top-info { padding: 15px 20px; background: white; }
+    </style>
+</head>
+<body>
+
+    <div class="top-info">
+        <h3 id="welcome-text" style="margin: 0 0 8px 0;">Welcome 🎉</h3>
+        <p id="user-info" style="margin: 0;"></p>
+    </div>
+
+    <div class="header">Student achievement Dashboard</div>
+
+    <div class="sidebar">
+        <a href="#">Home</a>
+        <button class="dropdown-btn" onclick="toggleDropdown()">Upload ▾</button>
+        <div class="dropdown-container" id="uploadMenu">
+            <a href="upload.html">Certificate</a>
+            <a href="project.html">Project</a>
+            <a href="uploadinternship.html">Internship</a>
+            <a href="uploadresume.html">Resume</a>
+        </div>
+        <a href="view.html">View Achievements</a>
+        <a href="view profile.html">Profile</a>
+        <a href="#" onclick="logout()">Logout</a>
+    </div>
+
+    <div class="main">
+        <div class="card">
+            <h3 class="stats" id="cert-count">0</h3>
+            <p>Certificates</p>
+        </div>
+        <div class="card">
+            <h3 class="stats" id="proj-count">0</h3>
+            <p>Projects</p>
+        </div>
+        <div class="card">
+            <h3 class="stats" id="intern-count">0</h3>
+            <p>Internships</p>
+        </div>
+    </div>
+
+    <script>
+        function toggleDropdown() {
+            let menu = document.getElementById('uploadMenu');
+            menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+        }
+
+        function loadProfile() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) return;
+
+            // Updated to find the profile belonging to THIS user from the new 'studentProfiles' array
+            let allProfiles = JSON.parse(localStorage.getItem('studentProfiles')) || [];
+            let myProfile = allProfiles.find(p => p.email === currentUser.email) || {};
+
+            document.getElementById('welcome-text').innerText = myProfile.name ? 'Welcome, ' + myProfile.name + ' 🎉' : 'Welcome 🎉';
+            document.getElementById('user-info').innerText = myProfile.pid ? 'ID: ' + myProfile.pid + ' | Email: ' + currentUser.email : currentUser.email;
+        }
+
+        function loadStats() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            
+            // Logic: Get global lists but FILTER them so Student B doesn't see Student A's work
+            let certs = JSON.parse(localStorage.getItem('certificates')) || [];
+            let projs = JSON.parse(localStorage.getItem('projects')) || [];
+            let interns = JSON.parse(localStorage.getItem('internships')) || [];
+
+            let myCerts = certs.filter(item => item.userEmail === currentUser.email);
+            let myProjs = projs.filter(item => item.userEmail === currentUser.email);
+            let myInterns = interns.filter(item => item.userEmail === currentUser.email);
+
+            document.getElementById('cert-count').innerText = myCerts.length;
+            document.getElementById('proj-count').innerText = myProjs.length;
+            document.getElementById('intern-count').innerText = myInterns.length;
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('role');
+            window.location.href = 'login.html';
+        }
+
+        window.onload = function() {
+            loadProfile();
+            loadStats();
+        };
+    </script>
+</body>
+</html>

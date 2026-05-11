@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register - Student Portal</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .box {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            width: 300px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        input, select {
+            width: 90%;
+            padding: 12px;
+            margin: 8px 0;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #007BFF;
+            box-shadow: 0 0 5px rgba(0,123,255,0.3);
+        }
+        button {
+            padding: 12px;
+            width: 90%;
+            background: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover:not(:disabled) { background: #0056b3; }
+        button:disabled { background: #6c757d; cursor: not-allowed; }
+        #msg { 
+            margin-top: 10px; 
+            padding: 10px; 
+            border-radius: 5px; 
+            background: #d4edda; 
+            color: #155724; 
+            display: none;
+        }
+        #msg.error { background: #f8d7da; color: #721c24; }
+        a { color: #007BFF; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        label {
+            display: block;
+            text-align: left;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+<div class="box">
+    <h2>Create Account</h2>
+    <label for="email">Email</label>
+    <input type="email" id="email" placeholder="example@college.edu" onkeydown="moveNext(event, 'password')" required>
+    
+    <label for="password">Password</label>
+    <input type="password" id="password" placeholder="At least 8 characters" onkeydown="moveNext(event, 'role')" required>
+    
+    <label for="role">Role</label>
+    <select id="role" required>
+        <option value="">Select Role</option>
+        <option value="student">Student</option>
+        <option value="faculty">Faculty</option>
+    </select>
+    
+    <button id="regBtn" onclick="register()">Register</button>
+    <div id="msg"></div>
+    <p style="margin-top: 20px;">Have account? <a href="login.html">Login here</a></p>
+</div>
+
+<script>
+function moveNext(event, nextId) {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        document.getElementById(nextId).focus();
+    }
+}
+
+function validatePassword(pass) {
+    if (pass.length < 8) return false;
+    if (!/[a-z]/.test(pass)) return false;
+    if (!/[A-Z]/.test(pass)) return false;
+    if (!/[0-9]/.test(pass)) return false;
+    return true;
+}
+
+function register() {
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+    const role = document.getElementById("role").value;
+    const msg = document.getElementById("msg");
+    const btn = document.getElementById("regBtn");
+
+    msg.style.display = "none";
+
+    if (!email || !password || !role) {
+        showMsg("Please fill all fields", false);
+        return;
+    }
+
+    if (!email.includes("@") || !email.includes(".")) {
+        showMsg("Please enter a valid email address", false);
+        return;
+    }
+
+    if (!validatePassword(password)) {
+        showMsg("Password must be 8+ chars with uppercase, lowercase, and number", false);
+        return;
+    }
+
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+    const exists = users.find(u => u.email === email);
+
+    if (exists) {
+        showMsg("Email already registered", false);
+        return;
+    }
+
+    users.push({ email, password, role });
+    localStorage.setItem("users", JSON.stringify(users));
+
+    showMsg("✅ Account created! Redirecting to login...", true);
+    btn.disabled = true;
+    btn.textContent = "Creating...";
+
+    setTimeout(() => {
+        window.location.href = "login.html";
+    }, 1500);
+}
+
+function showMsg(text, success) {
+    const msg = document.getElementById("msg");
+    msg.textContent = text;
+    msg.className = success ? "" : "error";
+    msg.style.display = "block";
+}
+</script>
+</body>
+</html>

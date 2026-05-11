@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Profile Details</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #f4f6f9;
+            margin: 0;
+            padding: 20px;
+        }
+        .topbar {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+        .edit-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            background: #007BFF;
+            color: white;
+            cursor: pointer;
+        }
+        .profile-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 450px;
+            margin: 0 auto;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .profile-pic {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #007BFF;
+            display: block;
+            margin: 0 auto 15px auto;
+        }
+        .details {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .row {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+        .label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 4px;
+            color: #333;
+        }
+        .value {
+            color: #555;
+            word-break: break-word;
+        }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <button class="edit-btn" onclick="location.href='profile.html'">Edit Details</button>
+    </div>
+
+    <div class="profile-card">
+        <img id="profilePic" class="profile-pic" src="" alt="Profile Picture">
+        <div class="details">
+            <div class="row"><span class="label">Name</span><span class="value" id="name"></span></div>
+            <div class="row"><span class="label">Personal ID</span><span class="value" id="pid"></span></div>
+            <div class="row"><span class="label">College ID</span><span class="value" id="clgId"></span></div>
+            <div class="row"><span class="label">Email</span><span class="value" id="email"></span></div>
+            <div class="row"><span class="label">Year</span><span class="value" id="year"></span></div>
+        </div>
+    </div>
+
+    <script>
+        function loadProfile() {
+            let profile = JSON.parse(localStorage.getItem('profile')) || {};
+            document.getElementById('name').innerText = profile.name || '';
+            document.getElementById('pid').innerText = profile.pid || '';
+            document.getElementById('clgId').innerText = profile.clgId || '';
+            document.getElementById('email').innerText = profile.email || '';
+            document.getElementById('year').innerText = profile.year || '';
+            if (profile.photo) document.getElementById('profilePic').src = profile.photo;
+        }
+        window.onload = loadProfile;
+    </script>
+</body>
+</html>

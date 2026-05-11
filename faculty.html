@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Faculty Dashboard - Review System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        /* ALL ORIGINAL STYLES PRESERVED */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo { font-size: 24px; font-weight: bold; color: #667eea; }
+        .user-info { display: flex; align-items: center; gap: 10px; }
+        .logout-btn {
+            background: #ff6b6b; color: white; border: none;
+            padding: 8px 16px; border-radius: 20px; cursor: pointer;
+        }
+        .back-nav {
+            background: #666; color: white; border: none;
+            padding: 8px 16px; border-radius: 20px; cursor: pointer;
+            margin-right: 10px; text-decoration: none; font-size: 14px;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 30px; }
+        .header { text-align: center; color: white; margin-bottom: 40px; }
+        .header h1 { font-size: 36px; margin-bottom: 10px; }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px; border-radius: 15px;
+            text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .stat-number { font-size: 36px; font-weight: bold; color: #667eea; }
+
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        .item-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px; overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .item-header {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white; padding: 20px; text-align: center;
+        }
+        .item-info { padding: 20px; }
+        .info-row { display: flex; justify-content: space-between; margin: 12px 0; }
+        .info-label { font-weight: 600; color: #555; }
+        .status { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; text-transform: uppercase; }
+        .status.pending { background: #fff3cd; color: #856404; }
+        .status.rejected { background: #f8d7da; color: #721c24; }
+
+        .action-btns { display: flex; gap: 8px; margin-top: 20px; }
+        .btn {
+            flex: 1; padding: 10px; border: none; border-radius: 8px;
+            cursor: pointer; font-weight: 600; font-size: 13px; color: white;
+        }
+        .btn.view { background: #007bff; }
+        .btn.approve { background: #28a745; }
+        .btn.reject { background: #dc3545; }
+
+        .modal {
+            display: none; position: fixed; z-index: 2000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: white; margin: 5% auto;
+            padding: 25px; border-radius: 15px; width: 550px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+        
+        .preview-img { width: 100%; border-radius: 8px; margin-top: 10px; border: 1px solid #ccc; max-height: 400px; object-fit: contain; }
+        textarea { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; resize: none; }
+        .no-data { text-align: center; color: white; grid-column: 1/-1; padding: 40px; }
+    </style>
+</head>
+<body>
+
+    <div id="rejectModal" class="modal">
+        <div class="modal-content">
+            <div style="font-size: 20px; font-weight: bold; margin-bottom: 15px;">Reason for Rejection</div>
+            <textarea id="feedbackInput" rows="4" placeholder="Explain what the student needs to fix..."></textarea>
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
+                <button class="btn" style="background:#666;" onclick="closeModal('rejectModal')">Cancel</button>
+                <button class="btn reject" onclick="confirmReject()">Confirm Rejection</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="viewModal" class="modal">
+        <div class="modal-content">
+            <div id="viewTitle" style="font-size: 20px; font-weight: bold; margin-bottom: 15px; color: #667eea;">Details</div>
+            <div id="viewBody" style="font-size: 15px; line-height: 1.6; color: #444;"></div>
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                <button class="btn" style="background:#666;" onclick="closeModal('viewModal')">← Back to List</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="navbar">
+        <div class="logo">🎓 Faculty Dashboard</div>
+        <div class="user-info">
+            <button class="back-nav" onclick="window.history.back()">← Back</button>
+            <span id="userEmail" style="font-size:14px; color:#666; margin-right: 10px;"></span>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>Faculty Review Panel</h1>
+            <p>Review and verify student submissions</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card"><div class="stat-number" id="totalItems">0</div><div>Total Items</div></div>
+            <div class="stat-card"><div class="stat-number" id="pendingCount">0</div><div>Pending</div></div>
+            <div class="stat-card"><div class="stat-number" id="approvedCount">0</div><div>Approved</div></div>
+        </div>
+
+        <div class="items-grid" id="itemsGrid"></div>
+    </div>
+
+    <script>
+        let currentRejectItem = null;
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const currentUser = localStorage.getItem("currentUser");
+            if (!currentUser) window.location.href = "login.html";
+            document.getElementById("userEmail").textContent = JSON.parse(currentUser).email;
+            loadDashboard();
+        });
+
+        function loadDashboard() {
+            const projects = JSON.parse(localStorage.getItem("projects") || "[]").map((p, i) => ({...p, type: 'project', uid: p.id || `p-${i}`}));
+            const certs = JSON.parse(localStorage.getItem("certificates") || "[]").map((c, i) => ({...c, type: 'certificate', uid: c.id || `c-${i}`}));
+            const allItems = [...projects, ...certs];
+
+            document.getElementById("totalItems").textContent = allItems.length;
+            document.getElementById("approvedCount").textContent = allItems.filter(i => i.status === 'approved').length;
+            document.getElementById("pendingCount").textContent = allItems.filter(i => i.status === 'pending').length;
+
+            const gridItems = allItems.filter(item => item.status !== 'approved');
+            const grid = document.getElementById("itemsGrid");
+            
+            if (gridItems.length === 0) {
+                grid.innerHTML = '<div class="no-data">All clear! No items requiring review.</div>';
+                return;
+            }
+
+            grid.innerHTML = gridItems.map(item => {
+                // Pulling student name from profile key for the card display
+                const profile = JSON.parse(localStorage.getItem("profile")) || {};
+                const displayName = profile.name || item.studentName || 'Unknown Student';
+
+                return `
+                    <div class="item-card">
+                        <div class="item-header"><h3>${item.title || item.projectName || item.certificateName || 'Submission'}</h3></div>
+                        <div class="item-info">
+                            <div class="info-row"><span class="info-label">Student:</span><span>${displayName}</span></div>
+                            <div class="info-row"><span class="info-label">Type:</span><span style="text-transform: capitalize;">${item.type}</span></div>
+                            <div class="info-row"><span class="info-label">Status:</span><span class="status ${item.status || 'pending'}">${item.status || 'pending'}</span></div>
+                            <div class="action-btns">
+                                <button class="btn view" onclick="viewSubmission('${item.type}', '${item.uid}')">VIEW</button>
+                                <button class="btn approve" onclick="handleApprove('${item.type}', '${item.uid}')">APPROVE</button>
+                                <button class="btn reject" onclick="openRejectModal('${item.type}', '${item.uid}')">REJECT</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function viewSubmission(type, uid) {
+            const key = type === 'project' ? 'projects' : 'certificates';
+            const data = JSON.parse(localStorage.getItem(key) || "[]");
+            const item = data.find((it, index) => (it.id || (type === 'project' ? `p-${index}` : `c-${index}`)) == uid);
+
+            if (!item) return;
+
+            // --- FETCH DATA DIRECTLY FROM YOUR PROFILE KEY ---
+            const profile = JSON.parse(localStorage.getItem("profile")) || {};
+            
+            const sName = profile.name || "Not Found";
+            const sEmail = profile.email || "Not Found";
+            const sId = profile.clgId || "Not Found";
+            const pId = profile.pid || "Not Found";
+            const sYear = profile.year || "Not Found";
+            const sImage = item.image || item.file || item.certificateFile;
+
+            document.getElementById("viewTitle").innerText = item.title || item.projectName || item.certificateName;
+            
+            let content = `
+                <div style="background: #f9f9f9; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 5px solid #667eea;">
+                    <p><strong>Student Name:</strong> ${sName}</p>
+                    <p><strong>College ID:</strong> ${sId}</p>
+                    <p><strong>Personal ID:</strong> ${pId}</p>
+                    <p><strong>Email:</strong> ${sEmail}</p>
+                    <p><strong>Year:</strong> ${sYear}</p>
+                </div>
+            `;
+
+            if (type === 'project') {
+                content += `<p><strong>Description:</strong> ${item.description || 'No description provided.'}</p>`;
+            }
+
+            if (sImage) {
+                content += `<p style="margin-top:10px; font-weight:bold;">Uploaded Document:</p>
+                            <img src="${sImage}" class="preview-img">`;
+            } else {
+                content += `<p style="color:red; margin-top:10px;">⚠️ No file attachment found.</p>`;
+            }
+
+            document.getElementById("viewBody").innerHTML = content;
+            document.getElementById("viewModal").style.display = "block";
+        }
+
+        function handleApprove(type, uid) {
+            updateItemStatus(type, uid, 'approved', '');
+        }
+
+        function openRejectModal(type, uid) {
+            currentRejectItem = { type, uid };
+            document.getElementById("rejectModal").style.display = "block";
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = "none";
+        }
+
+        function confirmReject() {
+            const feedback = document.getElementById("feedbackInput").value.trim();
+            if (!feedback) return alert("Reason required.");
+            updateItemStatus(currentRejectItem.type, currentRejectItem.uid, 'rejected', feedback);
+            closeModal('rejectModal');
+        }
+
+        function updateItemStatus(type, targetUid, newStatus, feedback) {
+            const key = type === 'project' ? 'projects' : 'certificates';
+            let data = JSON.parse(localStorage.getItem(key) || "[]");
+            const updatedData = data.map((item, index) => {
+                const currentUid = item.id || (type === 'project' ? `p-${index}` : `c-${index}`);
+                if (String(currentUid) === String(targetUid)) {
+                    return { ...item, status: newStatus, feedback: feedback };
+                }
+                return item;
+            });
+            localStorage.setItem(key, JSON.stringify(updatedData));
+            loadDashboard();
+        }
+
+        function logout() {
+            localStorage.removeItem("currentUser");
+            window.location.href = "login.html";
+        }
+    </script>
+</body>
+</html>
