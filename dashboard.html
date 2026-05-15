@@ -64,25 +64,42 @@
             const currentUser = JSON.parse(localStorage.getItem('currentUser'));
             if (!currentUser) return;
 
-            // Updated to find the profile belonging to THIS user from the new 'studentProfiles' array
             let allProfiles = JSON.parse(localStorage.getItem('studentProfiles')) || [];
             let myProfile = allProfiles.find(p => p.email === currentUser.email) || {};
 
             document.getElementById('welcome-text').innerText = myProfile.name ? 'Welcome, ' + myProfile.name + ' 🎉' : 'Welcome 🎉';
+            // Store PID in a global-ish way for loadStats to use
+            window.currentPID = myProfile.pid; 
             document.getElementById('user-info').innerText = myProfile.pid ? 'ID: ' + myProfile.pid + ' | Email: ' + currentUser.email : currentUser.email;
         }
 
         function loadStats() {
             const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            
-            // Logic: Get global lists but FILTER them so Student B doesn't see Student A's work
-            let certs = JSON.parse(localStorage.getItem('certificates')) || [];
-            let projs = JSON.parse(localStorage.getItem('projects')) || [];
-            let interns = JSON.parse(localStorage.getItem('internships')) || [];
+            if (!currentUser) return;
 
-            let myCerts = certs.filter(item => item.userEmail === currentUser.email);
-            let myProjs = projs.filter(item => item.userEmail === currentUser.email);
-            let myInterns = interns.filter(item => item.userEmail === currentUser.email);
+            const certs = JSON.parse(localStorage.getItem('certificates')) || [];
+            const projs = JSON.parse(localStorage.getItem('projects')) || [];
+            const interns = JSON.parse(localStorage.getItem('internships')) || [];
+
+            // FILTER LOGIC FOR CERTIFICATES
+            // We check for clgId (from upload.html) or userEmail
+            let myCerts = certs.filter(item => {
+                return item.clgId === window.currentPID || 
+                       item.userEmail === currentUser.email ||
+                       item.pid === window.currentPID;
+            });
+
+            // FILTER LOGIC FOR PROJECTS
+            let myProjs = projs.filter(item => {
+                return item.userEmail === currentUser.email || 
+                       item.clgId === window.currentPID;
+            });
+
+            // FILTER LOGIC FOR INTERNSHIPS
+            let myInterns = interns.filter(item => {
+                return item.userEmail === currentUser.email || 
+                       item.clgId === window.currentPID;
+            });
 
             document.getElementById('cert-count').innerText = myCerts.length;
             document.getElementById('proj-count').innerText = myProjs.length;
@@ -96,8 +113,8 @@
         }
 
         window.onload = function() {
-            loadProfile();
-            loadStats();
+            loadProfile(); // Load profile first to get the PID
+            loadStats();   // Then load stats
         };
     </script>
 </body>
