@@ -135,8 +135,21 @@
             return;
         }
 
+        // Capture current date
+        const uploadDate = new Date().toLocaleDateString('en-GB');
+
         let projects = JSON.parse(localStorage.getItem('projects')) || [];
-        projects.push({ title, desc, tech, link, status });
+        
+        // Added 'date' to the object
+        projects.push({ 
+            title, 
+            desc, 
+            tech, 
+            link, 
+            status, 
+            date: uploadDate 
+        });
+
         localStorage.setItem('projects', JSON.stringify(projects));
         msgBox.innerText = 'Project saved successfully!';
 
@@ -161,7 +174,10 @@
         projects.forEach((project) => {
             list.innerHTML += `
                 <div class="project-card">
-                    <h3>${project.title}</h3>
+                    <div style="display:flex; justify-content:space-between;">
+                        <h3>${project.title}</h3>
+                        <small style="color: #888;">📅 ${project.date || 'New'}</small>
+                    </div>
                     <p><b>Description:</b> ${project.desc}</p>
                     <p><b>Technology Used:</b> ${project.tech}</p>
                     <p><b>Project Link:</b> <a href="${project.link}" target="_blank">${project.link}</a></p>
