@@ -2,69 +2,119 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Certificate</title>
 
     <style>
+        :root {
+            --primary-color: #4361ee;
+            --primary-hover: #3a56d4;
+            --bg-gradient: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+            --text-main: #2d3436;
+            --white: #ffffff;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background: #f4f6f9;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             margin: 0;
             padding: 20px;
         }
 
         .container {
-            max-width: 500px;
-            margin: auto;
-            background: #fff;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 450px;
+            background: var(--white);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
         }
 
         h2 {
             text-align: center;
-            margin-bottom: 20px;
+            margin-top: 0;
+            margin-bottom: 30px;
+            color: var(--text-main);
+            font-weight: 700;
+            letter-spacing: -0.5px;
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         label {
-            font-weight: bold;
+            font-weight: 600;
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            color: #4a4a4a;
+            font-size: 14px;
         }
 
         input, textarea {
             width: 100%;
-            padding: 8px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            box-sizing: border-box; 
+            font-size: 14px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        input:focus, textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.1);
         }
 
         input[type="file"] {
-            border: none;
+            padding: 10px;
+            background: #f8f9fa;
+            border: 1px dashed #ccc;
+            cursor: pointer;
         }
 
         button {
             width: 100%;
-            padding: 10px;
-            background: #007BFF;
+            padding: 12px;
+            background: var(--primary-color);
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s, background 0.3s;
+            margin-top: 10px;
         }
 
         button:hover {
-            background: #0056b3;
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(0);
         }
 
         .back-btn {
-            margin-top: 10px;
-            background: gray;
+            background: transparent;
+            color: #636e72;
+            margin-top: 15px;
+            border: 1px solid #dcdde1;
+        }
+
+        .back-btn:hover {
+            background: #f1f2f6;
+            color: #2d3436;
+        }
+
+        textarea {
+            resize: vertical;
         }
     </style>
 </head>
@@ -78,17 +128,17 @@
         
         <div class="form-group">
             <label>College ID</label>
-            <input type="text" id="clgId" required>
+            <input type="text" id="clgId" placeholder="Enter your ID" required>
         </div>
 
         <div class="form-group">
             <label>Certificate Title</label>
-            <input type="text" id="title" required>
+            <input type="text" id="title" placeholder="e.g. Web Development Workshop" required>
         </div>
 
         <div class="form-group">
             <label>Description</label>
-            <textarea id="desc" rows="3" required></textarea>
+            <textarea id="desc" rows="3" placeholder="Briefly describe the certificate..." required></textarea>
         </div>
 
         <div class="form-group">
@@ -119,20 +169,24 @@ function saveCertificate(event) {
     }
 
     let file = fileInput.files[0];
-
     let profile = JSON.parse(localStorage.getItem("profile")) || {};
     let certificates = JSON.parse(localStorage.getItem("certificates")) || [];
 
     let reader = new FileReader();
 
     reader.onload = function () {
+        // Capture current date
+        const uploadDate = new Date().toLocaleDateString('en-GB');
+
         certificates.push({
             clgId: clgId,
             pid: profile.pid || "",
             title: title,
             desc: desc,
-            file: reader.result, // storing file as base64
-            status: "Pending"
+            file: reader.result, 
+            status: "Pending",
+            date: uploadDate,      // Added Date key
+            timestamp: Date.now()  // Added Timestamp for sorting
         });
 
         localStorage.setItem("certificates", JSON.stringify(certificates));
