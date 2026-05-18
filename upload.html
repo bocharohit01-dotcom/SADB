@@ -3,201 +3,474 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Certificate</title>
-
+    <title>Upload Certificate - Student Achievement</title>
     <style>
         :root {
-            --primary-color: #4361ee;
-            --primary-hover: #3a56d4;
-            --bg-gradient: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
-            --text-main: #2d3436;
-            --white: #ffffff;
+            --sidebar-width: 200px;
+            --primary-blue: #007BFF;
+            --dark-blue: #2c3e50;
+            --dark-blue-hover: #34495e;
+            --menu-dropdown-bg: #243445;
+            --success-green: #2ecc71;
+            --error-red: #e74c3c;
         }
 
-        body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: var(--bg-gradient);
-            min-height: 100vh;
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            background-color: #f4f6f9; 
+            color: #333;
             display: flex;
-            align-items: center;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        .sidebar { 
+            width: var(--sidebar-width); 
+            height: 100vh; 
+            background-color: var(--dark-blue); 
+            color: white; 
+            position: fixed; 
+            top: 0;
+            left: 0;
+            padding-top: 20px; 
+            z-index: 100; 
+            transition: transform 0.3s ease;
+        }
+        .sidebar a, .dropdown-btn { 
+            display: block; 
+            padding: 10px; 
+            color: white; 
+            text-decoration: none; 
+            background: none; 
+            border: none; 
+            width: 100%; 
+            text-align: left; 
+            cursor: pointer; 
+            font-size: 16px; 
+            box-sizing: border-box; 
+            transition: background-color 0.2s;
+        }
+        .sidebar a:hover, .dropdown-btn:hover { 
+            background-color: var(--dark-blue-hover); 
+        }
+
+        .dropdown-container { 
+            display: none; 
+            background-color: var(--menu-dropdown-bg); 
+        }
+        .dropdown-container.show {
+            display: block;
+        }
+        .dropdown-container a { 
+            padding-left: 25px; 
+        }
+
+        .content-container {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            transition: margin-left 0.3s ease;
+        }
+
+        .top-info { 
+            padding: 20px; 
+            background: white; 
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .header { 
+            background-color: var(--primary-blue); 
+            color: white; 
+            padding: 15px; 
+            text-align: center; 
+            font-size: 22px; 
+        }
+        .main { 
+            padding: 20px; 
+            flex: 1;
+            display: flex;
             justify-content: center;
-            margin: 0;
-            padding: 20px;
         }
 
-        .container {
+        .form-card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             width: 100%;
-            max-width: 450px;
-            background: var(--white);
-            padding: 40px;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            max-width: 600px;
+            box-sizing: border-box;
         }
-
-        h2 {
-            text-align: center;
+        .form-card h2 {
             margin-top: 0;
-            margin-bottom: 30px;
-            color: var(--text-main);
-            font-weight: 700;
-            letter-spacing: -0.5px;
+            color: var(--dark-blue);
+            border-bottom: 2px solid #f4f6f9;
+            padding-bottom: 10px;
+            font-size: 1.5rem;
         }
-
         .form-group {
             margin-bottom: 20px;
         }
-
-        label {
-            font-weight: 600;
+        .form-group label {
             display: block;
+            font-weight: bold;
             margin-bottom: 8px;
-            color: #4a4a4a;
+            color: #555;
             font-size: 14px;
         }
-
-        input, textarea {
+        .form-control {
             width: 100%;
-            padding: 12px 15px;
-            border-radius: 8px;
-            border: 1px solid #e0e0e0;
-            box-sizing: border-box; 
-            font-size: 14px;
-            transition: all 0.3s ease;
-            outline: none;
-        }
-
-        input:focus, textarea:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.1);
-        }
-
-        input[type="file"] {
             padding: 10px;
-            background: #f8f9fa;
-            border: 1px dashed #ccc;
-            cursor: pointer;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 15px;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-blue);
         }
 
-        button {
-            width: 100%;
-            padding: 12px;
-            background: var(--primary-color);
+        .btn-submit {
+            background-color: var(--primary-blue);
             color: white;
             border: none;
-            border-radius: 8px;
-            cursor: pointer;
+            padding: 12px 20px;
             font-size: 16px;
-            font-weight: 600;
-            transition: transform 0.2s, background 0.3s;
-            margin-top: 10px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        .btn-submit:hover {
+            background-color: #0056b3;
+        }
+        .btn-submit:active {
+            transform: scale(0.98);
         }
 
-        button:hover {
-            background: var(--primary-hover);
-            transform: translateY(-1px);
+        /* custom toast notification system */
+        .toast {
+            position: fixed;
+            bottom: -100px;
+            right: 20px;
+            background-color: #333;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 5px;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+        }
+        .toast.show {
+            bottom: 20px;
+        }
+        .toast.success { background-color: var(--success-green); }
+        .toast.error { background-color: var(--error-red); }
+
+        .mobile-header {
+            display: none;
+            background-color: var(--dark-blue);
+            color: white;
+            padding: 12px 15px;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 150;
+        }
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
         }
 
-        button:active {
-            transform: translateY(0);
-        }
-
-        .back-btn {
-            background: transparent;
-            color: #636e72;
-            margin-top: 15px;
-            border: 1px solid #dcdde1;
-        }
-
-        .back-btn:hover {
-            background: #f1f2f6;
-            color: #2d3436;
-        }
-
-        textarea {
-            resize: vertical;
+        @media (max-width: 768px) {
+            .mobile-header {
+                display: flex;
+            }
+            .sidebar {
+                transform: translateX(-100%);
+                top: 48px;
+                height: calc(100vh - 48px);
+                width: 100%;
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .content-container {
+                margin-left: 0;
+            }
+            .main {
+                padding: 15px;
+            }
+            .form-card {
+                padding: 20px;
+            }
         }
     </style>
 </head>
-
 <body>
 
-<div class="container">
-    <h2>Upload Certificate</h2>
+    <div class="mobile-header">
+        <span style="font-weight: bold;">Dashboard Navigation</span>
+        <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+    </div>
 
-    <form onsubmit="saveCertificate(event)">
-        
-        <div class="form-group">
-            <label>College ID</label>
-            <input type="text" id="clgId" placeholder="Enter your ID" required>
+    <!-- Sidebar Navigation Drawer -->
+    <div class="sidebar" id="sidebar">
+        <a href="dashboard.html" onclick="closeMobileMenu()">Home</a>
+        <button class="dropdown-btn" onclick="toggleDropdown()">Upload ▾</button>
+        <div class="dropdown-container show" id="uploadMenu">
+            <a href="#" style="background-color: var(--dark-blue-hover);">Certificate</a>
+            <a href="project.html">Project</a>
+            <a href="uploadinternship.html">Internship</a>
+            <a href="uploadresume.html">Resume</a>
+        </div>
+        <a href="view.html" onclick="closeMobileMenu()">View Achievements</a>
+        <a href="view profile.html" onclick="closeMobileMenu()">Profile</a>
+        <a href="#" onclick="logout()">Logout</a>
+    </div>
+
+    <!-- Main Content Workspace Wrapper -->
+    <div class="content-container">
+        <!-- Top Profile Banner -->
+        <div class="top-info">
+            <h3 id="welcome-text" style="margin: 0 0 8px 0;">Welcome 🎉</h3>
+            <p id="user-info" style="margin: 0; color: #555;"></p>
         </div>
 
-        <div class="form-group">
-            <label>Certificate Title</label>
-            <input type="text" id="title" placeholder="e.g. Web Development Workshop" required>
+        <div class="header">Upload Achievement Certificate</div>
+
+        <div class="main">
+            <div class="form-card">
+                <h2>Certificate Details</h2>
+                <form id="certificateForm" onsubmit="handleCertificateUpload(event)">
+                    <div class="form-group">
+                        <label for="certTitle">Certificate Title *</label>
+                        <input type="text" id="certTitle" class="form-control" placeholder="e.g., AWS Certified Cloud Practitioner" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="certIssuer">Issuing Organization *</label>
+                        <input type="text" id="certIssuer" class="form-control" placeholder="e.g., Amazon Web Services (AWS) or Coursera" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="certDate">Issue Date *</label>
+                        <input type="date" id="certDate" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="credUrl">Credential Link / URL (Optional)</label>
+                        <input type="url" id="credUrl" class="form-control" placeholder="e.g., https://aws.amazon.com/verify/example">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="certFile">Upload File (PNG, JPG, PDF) *</label>
+                        <input type="file" id="certFile" class="form-control" accept=".png, .jpg, .jpeg, .pdf" required onchange="validateFileSize(this)">
+                        <small style="color: #666; display: block; margin-top: 5px;">Max file size: 1.5MB to save securely locally.</small>
+                    </div>
+
+                    <button type="submit" class="btn-submit" id="submitBtn">Save Certificate</button>
+                </form>
+            </div>
         </div>
+    </div>
 
-        <div class="form-group">
-            <label>Description</label>
-            <textarea id="desc" rows="3" placeholder="Briefly describe the certificate..." required></textarea>
-        </div>
+    <!-- Custom Toast Feedbacks -->
+    <div id="toast" class="toast">Feedback message here</div>
 
-        <div class="form-group">
-            <label>Upload File</label>
-            <input type="file" id="file" accept=".pdf,.jpg,.png" required>
-        </div>
+    <script>
+        // Store base64 data safely
+        let base64FileData = "";
+        let uploadedFileName = "";
 
-        <button type="submit">Submit Certificate</button>
-        <button type="button" class="back-btn" onclick="location.href='dashboard.html'">
-            Back to Dashboard
-        </button>
+        // Toggles responsive hamburger sidebar drawer states
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
 
-    </form>
-</div>
+        function closeMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.remove('active');
+        }
 
-<script>
-function saveCertificate(event) {
-    event.preventDefault();
+        function toggleDropdown() {
+            const menu = document.getElementById('uploadMenu');
+            menu.classList.toggle('show');
+        }
 
-    let clgId = document.getElementById("clgId").value.trim();
-    let title = document.getElementById("title").value.trim();
-    let desc = document.getElementById("desc").value.trim();
-    let fileInput = document.getElementById("file");
+        // Custom Toast Alert instead of standard alerts
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.innerText = message;
+            toast.className = `toast show ${type}`;
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        }
 
-    if (!fileInput.files.length) {
-        alert("Please upload a certificate file.");
-        return;
-    }
+        // Check file size limit and read into base64 strings
+        function validateFileSize(input) {
+            const file = input.files[0];
+            if (!file) return;
 
-    let file = fileInput.files[0];
-    let profile = JSON.parse(localStorage.getItem("profile")) || {};
-    let certificates = JSON.parse(localStorage.getItem("certificates")) || [];
+            // 1.5MB Limit Check
+            if (file.size > 1.5 * 1024 * 1024) {
+                showToast("File is too large! Please choose a file smaller than 1.5MB.", "error");
+                input.value = ""; // Clear file selection
+                base64FileData = "";
+                uploadedFileName = "";
+                return;
+            }
 
-    let reader = new FileReader();
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                base64FileData = e.target.result;
+                uploadedFileName = file.name;
+            };
+            reader.readAsDataURL(file);
+        }
 
-    reader.onload = function () {
-        // Capture current date
-        const uploadDate = new Date().toLocaleDateString('en-GB');
+        function loadProfile(currentUser) {
+            if (!currentUser || !currentUser.email) return {};
 
-        certificates.push({
-            clgId: clgId,
-            pid: profile.pid || "",
-            title: title,
-            desc: desc,
-            file: reader.result, 
-            status: "Pending",
-            date: uploadDate,      // Added Date key
-            timestamp: Date.now()  // Added Timestamp for sorting
-        });
+            let storedProfile = JSON.parse(localStorage.getItem('profile')) || {};
+            if (storedProfile.email === currentUser.email) {
+                renderProfileData(storedProfile, currentUser.email);
+                return storedProfile;
+            }
 
-        localStorage.setItem("certificates", JSON.stringify(certificates));
+            let allProfiles = JSON.parse(localStorage.getItem('studentProfiles')) || [];
+            let myProfile = allProfiles.find(p => p.email === currentUser.email) || {};
 
-        alert("Certificate uploaded successfully!");
-        document.querySelector("form").reset();
-    };
+            renderProfileData(myProfile, currentUser.email);
+            return myProfile;
+        }
 
-    reader.readAsDataURL(file);
-}
-</script>
+        function renderProfileData(profile, email) {
+            document.getElementById('welcome-text').innerText = profile.name ? 'Welcome, ' + profile.name + ' 🎉' : 'Welcome 🎉';
+            document.getElementById('user-info').innerText = profile.pid ? 'ID: ' + profile.pid + ' | Email: ' + email : email;
+        }
 
+        function handleCertificateUpload(event) {
+            event.preventDefault();
+
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) {
+                showToast("User session expired. Please log in.", "error");
+                return;
+            }
+
+            const profile = JSON.parse(localStorage.getItem('profile')) || {};
+            const currentPID = profile.pid || "";
+
+            // Gather values
+            const title = document.getElementById('certTitle').value.trim();
+            const issuer = document.getElementById('certIssuer').value.trim();
+            const date = document.getElementById('certDate').value;
+            const credUrl = document.getElementById('credUrl').value.trim();
+
+            if (!base64FileData) {
+                showToast("Please wait for your file to finish loading, or upload a valid file.", "error");
+                return;
+            }
+
+            // Create structured certificate object compatible with your filter schema
+            const newCertificate = {
+                id: Date.now(), // Unique entry ID
+                title: title,
+                issuer: issuer,
+                date: date,
+                pid: currentPID,      // Crucial link parameter for dashboards
+                clgId: currentPID,    // Backup linkage matching dashboard schema
+                userEmail: currentUser.email, // Exact match tracking
+                name: profile.name || "",
+                year: profile.year || "",
+                studentDetails: {
+                    name: profile.name || "",
+                    email: currentUser.email || "",
+                    pid: currentPID,
+                    clgId: currentPID,
+                    year: profile.year || ""
+                },
+                credentialId: "",     // Stored as empty string to support existing dashboard structures
+                credentialUrl: credUrl,
+                fileName: uploadedFileName,
+                fileData: base64FileData,
+                uploadDate: new Date().toISOString()
+            };
+
+            // Fetch, Append and Save back to localized Database Array
+            const certs = JSON.parse(localStorage.getItem('certificates')) || [];
+            certs.push(newCertificate);
+            
+            try {
+                localStorage.setItem('certificates', JSON.stringify(certs));
+                showToast("Certificate saved and uploaded successfully! 🎉", "success");
+                
+                // Disable button and redirect
+                document.getElementById('submitBtn').disabled = true;
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 2000);
+            } catch (error) {
+                console.error("Local storage allocation limit exceeded.", error);
+                showToast("Failed to save certificate. Browser Storage full. Try uploading a smaller size image.", "error");
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('role');
+            try {
+                window.location.href = 'login.html';
+            } catch (e) {
+                console.warn("Redirection blocked. Reloading state.");
+                window.location.reload();
+            }
+        }
+
+        window.onload = function() {
+            let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            
+            const isIframe = window.self !== window.top;
+            if (!currentUser && isIframe) {
+                currentUser = { email: "student@example.com" };
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                localStorage.setItem('profile', JSON.stringify({
+                    email: "student@example.com",
+                    name: "Jane Doe",
+                    pid: "STU10123"
+                }));
+            }
+            
+            if (!currentUser) {
+                try {
+                    window.location.href = 'login.html';
+                } catch (e) {
+                    currentUser = { email: "student.demo@example.com" };
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    loadProfile(currentUser);
+                    return;
+                }
+                return;
+            }
+
+            loadProfile(currentUser);   
+        };
+    </script>
 </body>
 </html>
