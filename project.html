@@ -8,7 +8,7 @@
             background: #f4f6f9;
             margin: 0;
             padding: 20px;
-         }
+        }
         .container {
             display: flex;
             gap: 20px;
@@ -129,6 +129,8 @@
         let link = document.getElementById('link').value.trim();
         let status = document.getElementById('status').value;
         let msgBox = document.getElementById('msg');
+        let profile = JSON.parse(localStorage.getItem('profile')) || {};
+        let currentUser = JSON.parse(localStorage.getItem('currentUser')) || {};
 
         if (title === '' || desc === '' || tech === '' || link === '') {
             alert('Please fill all fields');
@@ -147,7 +149,19 @@
             tech, 
             link, 
             status, 
-            date: uploadDate 
+            date: uploadDate,
+            userEmail: currentUser.email || profile.email || "",
+            name: profile.name || "",
+            year: profile.year || "",
+            pid: profile.pid || "",
+            clgId: profile.clgId || "",
+            studentDetails: {
+                name: profile.name || "",
+                email: currentUser.email || profile.email || "",
+                pid: profile.pid || "",
+                clgId: profile.clgId || "",
+                year: profile.year || ""
+            }
         });
 
         localStorage.setItem('projects', JSON.stringify(projects));
