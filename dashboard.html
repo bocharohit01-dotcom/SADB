@@ -62,21 +62,31 @@
 
         function loadProfile() {
             const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            let role = localStorage.getItem('role') || (currentUser && currentUser.role) || '';
 
-            // If there's no logged-in user, send to login
-            if (!currentUser) {
+            if (!currentUser || !currentUser.email) {
                 window.location.href = 'login.html';
                 return;
             }
 
-            let allProfiles = JSON.parse(localStorage.getItem('studentProfiles')) || [];
-            let myProfile = allProfiles.find(p => p.email === currentUser.email) || {};
+            if (role !== 'student') {
+                const users = JSON.parse(localStorage.getItem('users') || '[]');
+                const storedUser = users.find(u => u.email === currentUser.email);
+                if (storedUser && storedUser.role === 'student') {
+                    role = 'student';
+                    localStorage.setItem('role', 'student');
+                } else {
+                    window.location.href = 'login.html';
+                    return;
+                }
+            }
 
-            // Prefer showing the student's name if available, otherwise show their email
+            let allProfiles = JSON.parse(localStorage.getItem('studentProfiles')) || [];
+            let myProfile = allProfiles.find(p => p.email === currentUser.email) || currentUser;
+
             document.getElementById('welcome-text').innerText = myProfile.name ? 'Welcome, ' + myProfile.name + ' 🎉' : 'Welcome, ' + currentUser.email + ' 🎉';
-            // Store PID in a global-ish way for loadStats to use
-            window.currentPID = myProfile.pid; 
-            document.getElementById('user-info').innerText = myProfile.pid ? 'ID: ' + myProfile.pid + ' | Email: ' + currentUser.email : currentUser.email;
+            window.currentPID = myProfile.pid || myProfile.clgId || '';
+            document.getElementById('user-info').innerText = (myProfile.pid || myProfile.clgId) ? 'ID: ' + (myProfile.pid || myProfile.clgId) + ' | Email: ' + currentUser.email : currentUser.email;
         }
 
         function loadStats() {
