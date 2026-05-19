@@ -62,12 +62,18 @@
 
         function loadProfile() {
             const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            if (!currentUser) return;
+
+            // If there's no logged-in user, send to login
+            if (!currentUser) {
+                window.location.href = 'login.html';
+                return;
+            }
 
             let allProfiles = JSON.parse(localStorage.getItem('studentProfiles')) || [];
             let myProfile = allProfiles.find(p => p.email === currentUser.email) || {};
 
-            document.getElementById('welcome-text').innerText = myProfile.name ? 'Welcome, ' + myProfile.name + ' 🎉' : 'Welcome 🎉';
+            // Prefer showing the student's name if available, otherwise show their email
+            document.getElementById('welcome-text').innerText = myProfile.name ? 'Welcome, ' + myProfile.name + ' 🎉' : 'Welcome, ' + currentUser.email + ' 🎉';
             // Store PID in a global-ish way for loadStats to use
             window.currentPID = myProfile.pid; 
             document.getElementById('user-info').innerText = myProfile.pid ? 'ID: ' + myProfile.pid + ' | Email: ' + currentUser.email : currentUser.email;
