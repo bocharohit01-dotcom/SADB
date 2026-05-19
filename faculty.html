@@ -423,6 +423,12 @@
             <p>Secure submission validation, approval routing, and student verification</p>
         </div>
 
+        <div style="margin:20px 0; display:flex; gap:8px; align-items:center;">
+            <input id="searchInput" type="text" placeholder="Search by student email or College ID" style="flex:1; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.06); color: white;" />
+            <button class="back-nav" id="searchBtn" onclick="applySearch()" style="margin-left:8px;">Search</button>
+            <button class="back-nav" onclick="clearSearch()" style="margin-left:4px;">Clear</button>
+        </div>
+
         <div class="stats">
             <div class="stat-card">
                 <div class="stat-number" id="totalItems">0</div>
@@ -444,6 +450,34 @@
 
     <script>
         let currentRejectItem = null;
+        let currentFilter = '';
+
+        function applySearch() {
+            const q = document.getElementById('searchInput').value || '';
+            currentFilter = q.trim().toLowerCase();
+            loadDashboard();
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            currentFilter = '';
+            loadDashboard();
+        }
+
+        function matchesFilter(item) {
+            if (!currentFilter) return true;
+            const s = currentFilter;
+            const student = resolveStudentDetails(item);
+            const candidates = [
+                (student.email || ''),
+                (student.pid || ''),
+                (student.clgId || ''),
+                (item.userEmail || ''),
+                (item.pid || ''),
+                (item.clgId || '')
+            ].map(x => String(x).toLowerCase());
+            return candidates.some(f => f.includes(s));
+        }
 
         // SECURE XSS MITIGATION: Standard sanitization filter
         function escapeHTML(str) {
@@ -525,15 +559,18 @@
                 return String(item.status || 'pending').trim().toLowerCase();
             }
 
-            // Render safe calculated statistics panel metrics
-            document.getElementById("totalItems").textContent = allItems.length;
-            document.getElementById("approvedCount").textContent = allItems.filter(i => getStatus(i) === 'approved').length;
-            document.getElementById("pendingCount").textContent = allItems.filter(i => {
+            // Apply search filter if present
+            const visibleItems = (typeof matchesFilter === 'function') ? allItems.filter(matchesFilter) : allItems;
+
+            // Render safe calculated statistics panel metrics (based on visible items)
+            document.getElementById("totalItems").textContent = visibleItems.length;
+            document.getElementById("approvedCount").textContent = visibleItems.filter(i => getStatus(i) === 'approved').length;
+            document.getElementById("pendingCount").textContent = visibleItems.filter(i => {
                 const status = getStatus(i);
                 return status !== 'approved' && status !== 'rejected';
             }).length;
 
-            const gridItems = allItems.filter(item => getStatus(item) !== 'approved');
+            const gridItems = visibleItems.filter(item => getStatus(item) !== 'approved');
             const grid = document.getElementById("itemsGrid");
             
             if (gridItems.length === 0) {
