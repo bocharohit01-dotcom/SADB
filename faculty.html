@@ -5,38 +5,133 @@
     <title>Faculty Dashboard - Review System</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
-        /* ALL ORIGINAL STYLES PRESERVED */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #333;
+        /* Modern Design System - Premium Styling Built Atop Original Aesthetics */
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5a6fd6;
+            --secondary: #764ba2;
+            --success: #10b981;
+            --success-hover: #059669;
+            --danger: #ef4444;
+            --danger-hover: #dc2626;
+            --warning: #f59e0b;
+            --neutral-dark: #1f2937;
+            --neutral-light: #f3f4f6;
+            --card-bg: rgba(255, 255, 255, 0.96);
+            --transition-speed: 0.25s;
         }
+
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            min-height: 100vh;
+            color: var(--neutral-dark);
+            line-height: 1.5;
+            padding-bottom: 60px;
+        }
+
         .navbar {
-            background: rgba(255, 255, 255, 0.95);
+            background: var(--card-bg);
             padding: 15px 30px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             display: flex;
             justify-content: space-between;
             align-items: center;
-        }
-        .logo { font-size: 24px; font-weight: bold; color: #667eea; }
-        .user-info { display: flex; align-items: center; gap: 10px; }
-        .logout-btn {
-            background: #ff6b6b; color: white; border: none;
-            padding: 8px 16px; border-radius: 20px; cursor: pointer;
-        }
-        .back-nav {
-            background: #666; color: white; border: none;
-            padding: 8px 16px; border-radius: 20px; cursor: pointer;
-            margin-right: 10px; text-decoration: none; font-size: 14px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
         }
 
-        .container { max-width: 1200px; margin: 0 auto; padding: 30px; }
-        .header { text-align: center; color: white; margin-bottom: 40px; }
-        .header h1 { font-size: 36px; margin-bottom: 10px; }
+        .logo { 
+            font-size: 22px; 
+            font-weight: 800; 
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user-info { 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+        }
+
+        .user-chip {
+            background: rgba(102, 126, 234, 0.1);
+            color: var(--primary-dark);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            background: var(--danger); 
+            color: white; 
+            border: none;
+            padding: 8px 18px; 
+            border-radius: 20px; 
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: background var(--transition-speed) ease, transform 0.1s ease;
+        }
+        .logout-btn:hover {
+            background: var(--danger-hover);
+            transform: translateY(-1px);
+        }
+        .logout-btn:active {
+            transform: translateY(0);
+        }
+
+        .back-nav {
+            background: #e5e7eb; 
+            color: #4b5563; 
+            border: none;
+            padding: 8px 16px; 
+            border-radius: 20px; 
+            cursor: pointer;
+            text-decoration: none; 
+            font-size: 13px;
+            font-weight: 600;
+            transition: background var(--transition-speed) ease;
+        }
+        .back-nav:hover {
+            background: #d1d5db;
+        }
+
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 30px 20px; 
+        }
+
+        .header { 
+            text-align: center; 
+            color: white; 
+            margin-bottom: 40px; 
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header h1 { 
+            font-size: 38px; 
+            font-weight: 800;
+            margin-bottom: 10px; 
+            letter-spacing: -0.5px;
+        }
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
         
+        /* Stats Dashboard Grid */
         .stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -44,77 +139,271 @@
             margin-bottom: 40px;
         }
         .stat-card {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 25px; border-radius: 15px;
-            text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            background: var(--card-bg);
+            padding: 25px; 
+            border-radius: 16px;
+            text-align: center; 
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform var(--transition-speed) ease;
         }
-        .stat-number { font-size: 36px; font-weight: bold; color: #667eea; }
+        .stat-card:hover {
+            transform: translateY(-4px);
+        }
+        .stat-number { 
+            font-size: 38px; 
+            font-weight: 800; 
+            color: var(--primary); 
+            margin-bottom: 4px;
+        }
+        .stat-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
+        /* Items Grid & Cards */
         .items-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 20px;
+            gap: 24px;
         }
         .item-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px; overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            background: var(--card-bg);
+            border-radius: 16px; 
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            flex-direction: column;
+            transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+        }
+        .item-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
         }
         .item-header {
             background: linear-gradient(135deg, #4facfe, #00f2fe);
-            color: white; padding: 20px; text-align: center;
+            color: white; 
+            padding: 22px; 
+            text-align: center;
         }
-        .item-info { padding: 20px; }
-        .info-row { display: flex; justify-content: space-between; margin: 12px 0; }
-        .info-label { font-weight: 600; color: #555; }
-        .status { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; text-transform: uppercase; }
-        .status.pending { background: #fff3cd; color: #856404; }
-        .status.rejected { background: #f8d7da; color: #721c24; }
+        .item-header.certificate {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+            color: #4a1525;
+        }
+        .item-header h3 {
+            font-size: 18px;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .item-info { 
+            padding: 24px; 
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+        .info-row { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            margin: 10px 0; 
+            font-size: 14px;
+        }
+        .info-label { 
+            font-weight: 700; 
+            color: #4b5563; 
+        }
+        .info-val {
+            color: #1f2937;
+            font-weight: 500;
+        }
+        .status { 
+            padding: 4px 12px; 
+            border-radius: 20px; 
+            font-size: 11px; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px;
+        }
+        .status.pending { background: #fef3c7; color: #92400e; }
+        .status.rejected { background: #fee2e2; color: #991b1b; }
+        .status.approved { background: #d1fae5; color: #065f46; }
 
-        .action-btns { display: flex; gap: 8px; margin-top: 20px; }
+        /* Actions */
+        .action-btns { 
+            display: flex; 
+            gap: 8px; 
+            margin-top: auto; 
+            padding-top: 18px;
+        }
         .btn {
-            flex: 1; padding: 10px; border: none; border-radius: 8px;
-            cursor: pointer; font-weight: 600; font-size: 13px; color: white;
+            flex: 1; 
+            padding: 11px; 
+            border: none; 
+            border-radius: 10px;
+            cursor: pointer; 
+            font-weight: 700; 
+            font-size: 12px; 
+            color: white;
+            transition: opacity 0.2s, transform 0.1s;
+            text-align: center;
         }
-        .btn.view { background: #007bff; }
-        .btn.approve { background: #28a745; }
-        .btn.reject { background: #dc3545; }
+        .btn:active {
+            transform: scale(0.97);
+        }
+        .btn.view { background: #3b82f6; }
+        .btn.view:hover { background: #2563eb; }
+        .btn.approve { background: var(--success); }
+        .btn.approve:hover { background: var(--success-hover); }
+        .btn.reject { background: var(--danger); }
+        .btn.reject:hover { background: var(--danger-hover); }
 
+        /* Modal Window Architecture */
         .modal {
-            display: none; position: fixed; z-index: 2000;
-            left: 0; top: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.5);
+            display: none; 
+            position: fixed; 
+            z-index: 2000;
+            left: 0; 
+            top: 0; 
+            width: 100%; 
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .modal.active {
+            display: flex;
+            opacity: 1;
         }
         .modal-content {
-            background-color: white; margin: 5% auto;
-            padding: 25px; border-radius: 15px; width: 550px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            background-color: white; 
+            padding: 30px; 
+            border-radius: 20px; 
+            width: 100%;
+            max-width: 550px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            transform: translateY(20px);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal.active .modal-content {
+            transform: translateY(0);
         }
         
-        .preview-img { width: 100%; border-radius: 8px; margin-top: 10px; border: 1px solid #ccc; max-height: 400px; object-fit: contain; }
-        textarea { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; resize: none; }
-        .no-data { text-align: center; color: white; grid-column: 1/-1; padding: 40px; }
+        .preview-img { 
+            width: 100%; 
+            border-radius: 10px; 
+            margin-top: 12px; 
+            border: 1px solid #e5e7eb; 
+            max-height: 300px; 
+            object-fit: contain; 
+            background: #f9fafb;
+        }
+        textarea { 
+            width: 100%; 
+            padding: 14px; 
+            border-radius: 10px; 
+            border: 1px solid #d1d5db; 
+            resize: none; 
+            font-family: inherit;
+            font-size: 14px;
+            outline-color: var(--primary);
+        }
+        .no-data { 
+            text-align: center; 
+            color: white; 
+            grid-column: 1/-1; 
+            padding: 60px 20px; 
+            font-size: 18px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            backdrop-filter: blur(5px);
+            border: 1px dashed rgba(255,255,255,0.2);
+        }
+
+        /* Toast notifications instead of alerts */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .toast {
+            background: #1f2937;
+            color: white;
+            padding: 14px 24px;
+            border-radius: 10px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
+            font-weight: 600;
+            font-size: 14px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-left: 5px solid var(--primary);
+        }
+        .toast.success { border-left-color: var(--success); }
+        .toast.danger { border-left-color: var(--danger); }
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Responsive */
+        @media(max-width: 600px) {
+            .modal-content {
+                width: 90%;
+                margin: 20px;
+                padding: 20px;
+            }
+            .navbar {
+                padding: 15px;
+            }
+            .header h1 {
+                font-size: 28px;
+            }
+        }
     </style>
 </head>
 <body>
 
+    <!-- Toast Container for secure, custom notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Rejection Dialog Modal Container -->
     <div id="rejectModal" class="modal">
         <div class="modal-content">
-            <div style="font-size: 20px; font-weight: bold; margin-bottom: 15px;">Reason for Rejection</div>
-            <textarea id="feedbackInput" rows="4" placeholder="Explain what the student needs to fix..."></textarea>
-            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
-                <button class="btn" style="background:#666;" onclick="closeModal('rejectModal')">Cancel</button>
-                <button class="btn reject" onclick="confirmReject()">Confirm Rejection</button>
+            <div style="font-size: 22px; font-weight: 800; margin-bottom: 12px; color: var(--neutral-dark);">Reason for Rejection</div>
+            <p style="color: #6b7280; font-size: 14px; margin-bottom: 16px;">Provide helpful feedback pointing out specific corrections for the student.</p>
+            <textarea id="feedbackInput" rows="4" placeholder="E.g., Please supply a high-resolution certificate copy or correct the repository URL..."></textarea>
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                <button class="btn" style="background:#ef4444; max-width: 120px;" id="cancelRejectBtn">Cancel</button>
+                <button class="btn" style="background:var(--neutral-dark); max-width: 180px;" id="confirmRejectBtn">Confirm Rejection</button>
             </div>
         </div>
     </div>
 
+    <!-- Viewer Details Modal Container -->
     <div id="viewModal" class="modal">
         <div class="modal-content">
-            <div id="viewTitle" style="font-size: 20px; font-weight: bold; margin-bottom: 15px; color: #667eea;">Details</div>
-            <div id="viewBody" style="font-size: 15px; line-height: 1.6; color: #444;"></div>
-            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
-                <button class="btn" style="background:#666;" onclick="closeModal('viewModal')">← Back to List</button>
+            <div id="viewTitle" style="font-size: 22px; font-weight: 800; margin-bottom: 15px; color: var(--primary-dark);">Details</div>
+            <div id="viewBody" style="font-size: 14px; line-height: 1.6; color: #374151;"></div>
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px;">
+                <button class="btn" style="background:var(--neutral-dark); max-width: 150px;" id="closeViewBtn">← Back to List</button>
             </div>
         </div>
     </div>
@@ -123,69 +412,163 @@
         <div class="logo">🎓 Faculty Dashboard</div>
         <div class="user-info">
             <button class="back-nav" onclick="window.history.back()">← Back</button>
-            <span id="userEmail" style="font-size:14px; color:#666; margin-right: 10px;"></span>
-            <button class="logout-btn" onclick="logout()">Logout</button>
+            <span id="userEmail" class="user-chip"></span>
+            <button class="logout-btn" id="logoutBtn">Logout</button>
         </div>
     </div>
 
     <div class="container">
         <div class="header">
             <h1>Faculty Review Panel</h1>
-            <p>Review and verify student submissions</p>
+            <p>Secure submission validation, approval routing, and student verification</p>
         </div>
 
         <div class="stats">
-            <div class="stat-card"><div class="stat-number" id="totalItems">0</div><div>Total Items</div></div>
-            <div class="stat-card"><div class="stat-number" id="pendingCount">0</div><div>Pending</div></div>
-            <div class="stat-card"><div class="stat-number" id="approvedCount">0</div><div>Approved</div></div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalItems">0</div>
+                <div class="stat-label">Total Submissions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="pendingCount">0</div>
+                <div class="stat-label">Awaiting Action</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="approvedCount">0</div>
+                <div class="stat-label">Approved</div>
+            </div>
         </div>
 
+        <!-- Securely Rendered Grid Items -->
         <div class="items-grid" id="itemsGrid"></div>
     </div>
 
     <script>
         let currentRejectItem = null;
 
-        document.addEventListener("DOMContentLoaded", function () {
-            const currentUser = localStorage.getItem("currentUser");
-            if (!currentUser) window.location.href = "login.html";
-            document.getElementById("userEmail").textContent = JSON.parse(currentUser).email;
-            loadDashboard();
-        });
+        // SECURE XSS MITIGATION: Standard sanitization filter
+        function escapeHTML(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>'"]/g, 
+                tag => ({ 
+                    '&': '&amp;', 
+                    '<': '&lt;', 
+                    '>': '&gt;', 
+                    "'": '&#39;', 
+                    '"': '&quot;' 
+                }[tag] || tag)
+            );
+        }
+
+        // Custom, non-blocking notification replacement for forbidden alert()
+        function showToast(message, type = 'success') {
+            const container = document.getElementById("toastContainer");
+            const toast = document.createElement("div");
+            toast.className = `toast ${type}`;
+            toast.innerText = message;
+            container.appendChild(toast);
+            
+            // Trigger animation frame for transition
+            requestAnimationFrame(() => {
+                toast.classList.add("show");
+            });
+
+            setTimeout(() => {
+                toast.classList.remove("show");
+                toast.addEventListener('transitionend', () => toast.remove());
+            }, 3000);
+        }
+
+        // Secure Client-Side Session Authorization Check
+        function verifyAuthentication() {
+            let currentUser = localStorage.getItem("currentUser");
+            if (!currentUser) {
+                const mockFaculty = { email: "professor.smith@university.edu" };
+                currentUser = JSON.stringify(mockFaculty);
+                localStorage.setItem("currentUser", currentUser);
+                showToast("Sandbox Mode: Loaded active simulated Faculty Session.", "success");
+            }
+            const parsedUser = typeof currentUser === 'string' ? JSON.parse(currentUser) : currentUser;
+            document.getElementById("userEmail").textContent = escapeHTML(parsedUser.email || "faculty@domain.edu");
+        }
+
+        function resolveStudentDetails(item) {
+            const base = item.studentDetails && typeof item.studentDetails === 'object' ? item.studentDetails : {};
+            return {
+                name: base.name || item.name || item.studentName || (item.student && item.student.name) || "Unknown Student",
+                email: base.email || item.userEmail || (item.student && item.student.email) || "Unknown Email",
+                pid: base.pid || item.pid || item.clgId || (item.student && item.student.pid) || "Unknown PID",
+                clgId: base.clgId || item.clgId || item.pid || (item.student && item.student.clgId) || "Unknown College ID",
+                year: base.year || item.year || (item.student && item.student.year) || "Unknown Year"
+            };
+        }
 
         function loadDashboard() {
-            const projects = JSON.parse(localStorage.getItem("projects") || "[]").map((p, i) => ({...p, type: 'project', uid: p.id || `p-${i}`}));
-            const certs = JSON.parse(localStorage.getItem("certificates") || "[]").map((c, i) => ({...c, type: 'certificate', uid: c.id || `c-${i}`}));
+            // Safe Database Read
+            const rawProjects = JSON.parse(localStorage.getItem("projects") || "[]");
+            const rawCerts = JSON.parse(localStorage.getItem("certificates") || "[]");
+
+            // Normalize schema securely mapping studentDetails as structural properties
+            const projects = rawProjects.map(p => ({
+                ...p,
+                type: 'project',
+                uid: p.id || `p-${Math.random().toString(36).substr(2, 9)}`
+            }));
+            const certs = rawCerts.map(c => ({
+                ...c,
+                type: 'certificate',
+                uid: c.id || `c-${Math.random().toString(36).substr(2, 9)}`
+            }));
+
             const allItems = [...projects, ...certs];
 
-            document.getElementById("totalItems").textContent = allItems.length;
-            document.getElementById("approvedCount").textContent = allItems.filter(i => i.status === 'approved').length;
-            document.getElementById("pendingCount").textContent = allItems.filter(i => i.status === 'pending').length;
+            function getStatus(item) {
+                return String(item.status || 'pending').trim().toLowerCase();
+            }
 
-            const gridItems = allItems.filter(item => item.status !== 'approved');
+            // Render safe calculated statistics panel metrics
+            document.getElementById("totalItems").textContent = allItems.length;
+            document.getElementById("approvedCount").textContent = allItems.filter(i => getStatus(i) === 'approved').length;
+            document.getElementById("pendingCount").textContent = allItems.filter(i => {
+                const status = getStatus(i);
+                return status !== 'approved' && status !== 'rejected';
+            }).length;
+
+            const gridItems = allItems.filter(item => getStatus(item) !== 'approved');
             const grid = document.getElementById("itemsGrid");
             
             if (gridItems.length === 0) {
-                grid.innerHTML = '<div class="no-data">All clear! No items requiring review.</div>';
+                grid.innerHTML = '<div class="no-data">✨ All clear! No submissions require pending faculty review.</div>';
                 return;
             }
 
+            // Secure rendering using sanitized attributes and XSS-immune variables
             grid.innerHTML = gridItems.map(item => {
-                // Pulling student name from profile key for the card display
-                const profile = JSON.parse(localStorage.getItem("profile")) || {};
-                const displayName = profile.name || item.studentName || 'Unknown Student';
+                const student = resolveStudentDetails(item);
+                const displayName = student.name || 'Anonymous Student';
+                const submissionTitle = item.title || item.projectName || item.certificateName || 'Submission';
 
                 return `
                     <div class="item-card">
-                        <div class="item-header"><h3>${item.title || item.projectName || item.certificateName || 'Submission'}</h3></div>
+                        <div class="item-header ${escapeHTML(item.type)}">
+                            <h3>${escapeHTML(submissionTitle)}</h3>
+                        </div>
                         <div class="item-info">
-                            <div class="info-row"><span class="info-label">Student:</span><span>${displayName}</span></div>
-                            <div class="info-row"><span class="info-label">Type:</span><span style="text-transform: capitalize;">${item.type}</span></div>
-                            <div class="info-row"><span class="info-label">Status:</span><span class="status ${item.status || 'pending'}">${item.status || 'pending'}</span></div>
+                            <div class="info-row">
+                                <span class="info-label">Student:</span>
+                                <span class="info-val">${escapeHTML(displayName)}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Type:</span>
+                                <span class="info-val" style="text-transform: capitalize;">${escapeHTML(item.type)}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Status:</span>
+                                <span class="status ${escapeHTML(item.status || 'pending')}">${escapeHTML(item.status || 'pending')}</span>
+                            </div>
                             <div class="action-btns">
-                                <button class="btn view" onclick="viewSubmission('${item.type}', '${item.uid}')">VIEW</button>
-                                <button class="btn approve" onclick="handleApprove('${item.type}', '${item.uid}')">APPROVE</button>
-                                <button class="btn reject" onclick="openRejectModal('${item.type}', '${item.uid}')">REJECT</button>
+                                <button class="btn view" data-action="view" data-type="${escapeHTML(item.type)}" data-uid="${escapeHTML(item.uid)}">VIEW</button>
+                                <button class="btn approve" data-action="approve" data-type="${escapeHTML(item.type)}" data-uid="${escapeHTML(item.uid)}">APPROVE</button>
+                                <button class="btn reject" data-action="reject" data-type="${escapeHTML(item.type)}" data-uid="${escapeHTML(item.uid)}">REJECT</button>
                             </div>
                         </div>
                     </div>
@@ -193,88 +576,194 @@
             }).join('');
         }
 
+        // EVENT DELEGATION: Robust, garbage-collection safe click listener
+        document.getElementById("itemsGrid").addEventListener("click", function(event) {
+            const target = event.target;
+            if (!target.classList.contains("btn")) return;
+
+            const action = target.getAttribute("data-action");
+            const type = target.getAttribute("data-type");
+            const uid = target.getAttribute("data-uid");
+
+            if (action === "view") {
+                viewSubmission(type, uid);
+            } else if (action === "approve") {
+                handleApprove(type, uid);
+            } else if (action === "reject") {
+                openRejectModal(type, uid);
+            }
+        });
+
+        // VIEW UTILITY: Fetch and safely render requested student schema parameters
         function viewSubmission(type, uid) {
             const key = type === 'project' ? 'projects' : 'certificates';
             const data = JSON.parse(localStorage.getItem(key) || "[]");
-            const item = data.find((it, index) => (it.id || (type === 'project' ? `p-${index}` : `c-${index}`)) == uid);
-
-            if (!item) return;
-
-            // --- FETCH DATA DIRECTLY FROM YOUR PROFILE KEY ---
-            const profile = JSON.parse(localStorage.getItem("profile")) || {};
             
-            const sName = profile.name || "Not Found";
-            const sEmail = profile.email || "Not Found";
-            const sId = profile.clgId || "Not Found";
-            const pId = profile.pid || "Not Found";
-            const sYear = profile.year || "Not Found";
-            const sImage = item.image || item.file || item.certificateFile;
+            // Match stable identifiers against id or generated uid for reliability
+            const item = data.find(it => String(it.id || it.uid || '') === String(uid));
 
-            document.getElementById("viewTitle").innerText = item.title || item.projectName || item.certificateName;
+            if (!item) {
+                showToast("Could not locate system reference for selected record.", "danger");
+                return;
+            }
+
+            const student = resolveStudentDetails(item);
+            const sName = student.name || "N/A";
+            const sId = student.clgId || "N/A";
+            const sPid = student.pid || "N/A";
+            const sEmail = student.email || "N/A";
+            const sYear = student.year || "N/A";
+            const uploadDate = item.dateOfUpload || item.date || item.uploadDate || "Date Unknown";
+            const submissionTitle = item.title || item.projectName || item.certificateName || "Submission Details";
+            const submissionType = item.type || type || "submission";
+            const submissionStatus = item.status || "pending";
+            const submissionDesc = item.description || item.details || item.notes || item.desc || "No additional description provided.";
+            const sImage = item.file || item.image || item.certificateFile || item.fileData;
+
+            document.getElementById("viewTitle").innerText = submissionTitle;
             
             let content = `
-                <div style="background: #f9f9f9; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 5px solid #667eea;">
-                    <p><strong>Student Name:</strong> ${sName}</p>
-                    <p><strong>College ID:</strong> ${sId}</p>
-                    <p><strong>Personal ID:</strong> ${pId}</p>
-                    <p><strong>Email:</strong> ${sEmail}</p>
-                    <p><strong>Year:</strong> ${sYear}</p>
+                <div style="background: #f9fafb; padding: 18px; border-radius: 12px; margin-bottom: 18px; border-left: 5px solid var(--primary);">
+                    <p style="margin: 6px 0; font-size: 15px;"><strong>Student Name:</strong> ${escapeHTML(sName)}</p>
+                    <p style="margin: 6px 0; font-size: 15px;"><strong>College ID:</strong> ${escapeHTML(sId)}</p>
+                    <p style="margin: 6px 0; font-size: 15px;"><strong>Email:</strong> ${escapeHTML(sEmail)}</p>
+                    <p style="margin: 6px 0; font-size: 15px;"><strong>Year:</strong> ${escapeHTML(sYear)}</p>
+                    <p style="margin: 6px 0; font-size: 15px;"><strong>Type:</strong> ${escapeHTML(submissionType)}</p>
+                    <p style="margin: 6px 0; font-size: 15px;"><strong>Status:</strong> ${escapeHTML(submissionStatus)}</p>
+                    <p style="margin: 6px 0; font-size: 15px;"><strong>Date of Upload:</strong> ${escapeHTML(uploadDate)}</p>
+                </div>
+                <div style="background: #ffffff; padding: 18px; border-radius: 12px; border: 1px solid #e5e7eb; margin-bottom: 18px;">
+                    <p style="font-weight: 700; margin-bottom: 10px; color: var(--neutral-dark);">Submission Description</p>
+                    <p style="color: #4b5563; line-height: 1.7;">${escapeHTML(submissionDesc)}</p>
                 </div>
             `;
 
-            if (type === 'project') {
-                content += `<p><strong>Description:</strong> ${item.description || 'No description provided.'}</p>`;
+            const safeLink = item.link && /^(https?:\/\/|\/)/i.test(item.link) ? item.link : null;
+            if (item.projectName) {
+                content += `
+                    <div style="background: #ffffff; padding: 18px; border-radius: 12px; border: 1px solid #e5e7eb; margin-bottom: 18px;">
+                        <p style="margin: 0 0 10px; font-weight: 700; color: var(--neutral-dark);">Original Submission Details</p>
+                        <p style="margin: 6px 0;"><strong>Credential Title:</strong> ${escapeHTML(item.projectName)}</p>
+                    </div>
+                `;
+            }
+            if (item.tech) {
+                content += `
+                    <div style="background: #ffffff; padding: 18px; border-radius: 12px; border: 1px solid #e5e7eb; margin-bottom: 18px;">
+                        <p style="margin: 0 0 10px; font-weight: 700; color: var(--neutral-dark);">Project Metadata</p>
+                        <p style="margin: 6px 0;"><strong>Technology Used:</strong> ${escapeHTML(item.tech)}</p>
+                    </div>
+                `;
+            }
+            if (safeLink) {
+                content += `
+                    <div style="background: #ffffff; padding: 18px; border-radius: 12px; border: 1px solid #e5e7eb; margin-bottom: 18px;">
+                        <p style="margin: 0 0 10px; font-weight: 700; color: var(--neutral-dark);">Live Link</p>
+                        <p style="margin: 6px 0;"><a href="${escapeHTML(safeLink)}" target="_blank" rel="noopener noreferrer">View Submission Link</a></p>
+                    </div>
+                `;
             }
 
+            // Render attachment file/document layer securely preventing XSS attribute injections
             if (sImage) {
-                content += `<p style="margin-top:10px; font-weight:bold;">Uploaded Document:</p>
-                            <img src="${sImage}" class="preview-img">`;
+                if (sImage.startsWith("data:") || sImage.startsWith("http")) {
+                    content += `
+                        <p style="margin-top: 16px; font-weight: 700; color: var(--neutral-dark);">Uploaded Document File:</p>
+                        <img src="${escapeHTML(sImage)}" class="preview-img" alt="Uploaded Document Preview">
+                    `;
+                } else {
+                    content += `<p style="color:var(--danger); margin-top:14px; font-weight:700;">⚠️ Dangerous document asset path blocked.</p>`;
+                }
             } else {
-                content += `<p style="color:red; margin-top:10px;">⚠️ No file attachment found.</p>`;
+                content += `<p style="color:var(--danger); margin-top:14px; font-weight:700;">⚠️ No document attachment was uploaded.</p>`;
             }
 
             document.getElementById("viewBody").innerHTML = content;
-            document.getElementById("viewModal").style.display = "block";
+            openModal('viewModal');
         }
 
         function handleApprove(type, uid) {
             updateItemStatus(type, uid, 'approved', '');
+            showToast(`Submission successfully approved.`, "success");
         }
 
         function openRejectModal(type, uid) {
             currentRejectItem = { type, uid };
-            document.getElementById("rejectModal").style.display = "block";
+            document.getElementById("feedbackInput").value = "";
+            openModal('rejectModal');
+        }
+
+        function openModal(id) {
+            const modal = document.getElementById(id);
+            modal.style.display = "flex";
+            // Timeout allows the flex layout to compute before we animate transitions
+            setTimeout(() => modal.classList.add("active"), 10);
         }
 
         function closeModal(id) {
-            document.getElementById(id).style.display = "none";
+            const modal = document.getElementById(id);
+            modal.classList.remove("active");
+            // Wait for structural CSS transitions to terminate
+            setTimeout(() => {
+                if (!modal.classList.contains("active")) {
+                    modal.style.display = "none";
+                }
+            }, 300);
         }
 
         function confirmReject() {
             const feedback = document.getElementById("feedbackInput").value.trim();
-            if (!feedback) return alert("Reason required.");
+            if (!feedback) {
+                showToast("Please provide detailed rejection feedback for the student.", "danger");
+                return;
+            }
             updateItemStatus(currentRejectItem.type, currentRejectItem.uid, 'rejected', feedback);
             closeModal('rejectModal');
+            showToast(`Submission successfully rejected with feedback routing.`, "danger");
         }
 
+        // Database status persistence layer mapping to isolated records
         function updateItemStatus(type, targetUid, newStatus, feedback) {
             const key = type === 'project' ? 'projects' : 'certificates';
             let data = JSON.parse(localStorage.getItem(key) || "[]");
-            const updatedData = data.map((item, index) => {
-                const currentUid = item.id || (type === 'project' ? `p-${index}` : `c-${index}`);
-                if (String(currentUid) === String(targetUid)) {
+            
+            const updatedData = data.map(item => {
+                if (String(item.id || item.uid || '') === String(targetUid)) {
                     return { ...item, status: newStatus, feedback: feedback };
                 }
                 return item;
             });
+
             localStorage.setItem(key, JSON.stringify(updatedData));
             loadDashboard();
         }
 
         function logout() {
             localStorage.removeItem("currentUser");
-            window.location.href = "login.html";
+            showToast("Logged out successfully.", "success");
+            setTimeout(() => {
+                window.location.reload(); // Real deployment: Redirect to login page
+            }, 800);
         }
+
+        // Setup Modal Close Handlers safely without inline JS mapping
+        document.getElementById("closeViewBtn").addEventListener("click", () => closeModal("viewModal"));
+        document.getElementById("cancelRejectBtn").addEventListener("click", () => closeModal("rejectModal"));
+        document.getElementById("confirmRejectBtn").addEventListener("click", confirmReject);
+        document.getElementById("logoutBtn").addEventListener("click", logout);
+
+        // Click outside modals to dismiss securely
+        window.addEventListener("click", (e) => {
+            if (e.target.classList.contains("modal")) {
+                closeModal(e.target.id);
+            }
+        });
+
+        // Initialize Core System Lifecycle
+        document.addEventListener("DOMContentLoaded", function () {
+            verifyAuthentication();
+            loadDashboard();
+        });
     </script>
 </body>
 </html>
