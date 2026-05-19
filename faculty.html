@@ -435,6 +435,7 @@
                 <div style="flex:1;">
                     <div style="font-weight:800; color:white; margin-bottom:6px;">Post Notification</div>
                     <textarea id="notifInput" rows="3" placeholder="Write an announcement for students..." style="width:100%;"></textarea>
+                    <input id="notifUrl" type="url" placeholder="Optional URL (https://...)" style="width:100%; margin-top:8px; padding:8px; border-radius:8px; border:1px solid rgba(255,255,255,0.12);" />
                     <div style="margin-top:8px; display:flex; gap:8px;">
                         <button class="back-nav" id="postNotifBtn">Post Notification</button>
                         <button class="back-nav" id="clearNotifBtn">Clear</button>
@@ -587,13 +588,16 @@
             let author = 'faculty';
             try { author = (JSON.parse(localStorage.getItem('currentUser') || '{}')).email || author; } catch(e){}
 
+            const urlInput = document.getElementById('notifUrl');
+            const urlVal = urlInput && urlInput.value ? urlInput.value.trim() : '';
+
             let data = JSON.parse(localStorage.getItem('notifications') || '[]');
 
             if (editingNotifId) {
                 // Save existing
                 data = data.map(n => {
                     if (String(n.id) === String(editingNotifId)) {
-                        return { ...n, message: msg, date: now, author };
+                        return { ...n, message: msg, date: now, author, url: urlVal };
                     }
                     return n;
                 });
@@ -603,13 +607,14 @@
                 showToast('Notification updated.', 'success');
             } else {
                 const id = 'n-' + Math.random().toString(36).substr(2, 9);
-                const notif = { id, message: msg, date: now, author };
+                const notif = { id, message: msg, date: now, author, url: urlVal };
                 data.push(notif);
                 localStorage.setItem('notifications', JSON.stringify(data));
                 showToast('Notification posted.', 'success');
             }
 
             input.value = '';
+            if (urlInput) urlInput.value = '';
             loadNotifications();
         }
 
@@ -619,7 +624,9 @@
             if (!found) { showToast('Notification not found.', 'danger'); return; }
             const input = document.getElementById('notifInput');
             const postBtn = document.getElementById('postNotifBtn');
+            const urlInput = document.getElementById('notifUrl');
             if (input) input.value = found.message;
+            if (urlInput) urlInput.value = found.url || '';
             editingNotifId = found.id;
             if (postBtn) postBtn.textContent = 'Save';
             showToast('Editing notification. Make changes and click Save.', 'success');
@@ -636,6 +643,8 @@
                 if (postBtn) postBtn.textContent = 'Post Notification';
                 const input = document.getElementById('notifInput');
                 if (input) input.value = '';
+                const urlInput = document.getElementById('notifUrl');
+                if (urlInput) urlInput.value = '';
             }
             loadNotifications();
             showToast('Notification removed.', 'success');
@@ -910,7 +919,16 @@
             const postBtn = document.getElementById('postNotifBtn');
             if (postBtn) postBtn.addEventListener('click', postNotification);
             const clearBtn = document.getElementById('clearNotifBtn');
-            if (clearBtn) clearBtn.addEventListener('click', () => { const i = document.getElementById('notifInput'); if (i) i.value = ''; });
+            if (clearBtn) clearBtn.addEventListener('click', () => {
+                const input = document.getElementById('notifInput');
+                const urlInput = document.getElementById('notifUrl');
+                if (input) input.value = '';
+                if (urlInput) urlInput.value = '';
+                if (editingNotifId) {
+                    editingNotifId = null;
+                    if (postBtn) postBtn.textContent = 'Post Notification';
+                }
+            });
         });
     </script>
 </body>
