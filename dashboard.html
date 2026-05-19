@@ -40,6 +40,13 @@
     </div>
 
     <div class="main">
+        <!-- Student Notifications -->
+        <div style="background:white; padding:12px; border-radius:8px; margin-bottom:12px;">
+            <h4 style="margin:0 0 8px 0;">Announcements</h4>
+            <div id="studentNotifList" style="max-height:160px; overflow:auto; color:#333;">
+                <div style="color:#666;">No notifications</div>
+            </div>
+        </div>
         <div class="card">
             <h3 class="stats" id="cert-count">0</h3>
             <p>Certificates</p>
@@ -58,6 +65,13 @@
         function toggleDropdown() {
             let menu = document.getElementById('uploadMenu');
             menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+        }
+
+        function escapeHTML(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>'"]/g, function(tag) {
+                return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag);
+            });
         }
 
         function loadProfile() {
@@ -122,6 +136,16 @@
             document.getElementById('intern-count').innerText = myInterns.length;
         }
 
+        function loadStudentNotifications() {
+            const raw = JSON.parse(localStorage.getItem('notifications') || '[]');
+            const list = document.getElementById('studentNotifList');
+            if (!list) return;
+            if (!raw.length) { list.innerHTML = '<div style="color:#666;">No notifications</div>'; return; }
+            list.innerHTML = raw.slice().reverse().map(n => {
+                return `<div style="padding:10px; border-bottom:1px solid #eee;"><div style="font-weight:700;">${escapeHTML(n.message)}</div><div style="font-size:12px;color:#666;margin-top:6px;">${escapeHTML(n.date)}${n.author? ' • ' + escapeHTML(n.author):''}</div></div>`;
+            }).join('');
+        }
+
         function logout() {
             localStorage.removeItem('currentUser');
             localStorage.removeItem('role');
@@ -131,6 +155,7 @@
         window.onload = function() {
             loadProfile(); // Load profile first to get the PID
             loadStats();   // Then load stats
+            loadStudentNotifications(); // Load announcements
         };
     </script>
 </body>
