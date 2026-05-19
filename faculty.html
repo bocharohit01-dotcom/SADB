@@ -429,6 +429,24 @@
             <button class="back-nav" onclick="clearSearch()" style="margin-left:4px;">Clear</button>
         </div>
 
+        <!-- Notifications: faculty can post announcements for students -->
+        <div style="margin:20px 0; padding:16px; background: rgba(255,255,255,0.04); border-radius:12px;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px;">
+                <div style="flex:1;">
+                    <div style="font-weight:800; color:white; margin-bottom:6px;">Post Notification</div>
+                    <textarea id="notifInput" rows="3" placeholder="Write an announcement for students..." style="width:100%;"></textarea>
+                    <div style="margin-top:8px; display:flex; gap:8px;">
+                        <button class="back-nav" id="postNotifBtn">Post Notification</button>
+                        <button class="back-nav" id="clearNotifBtn">Clear</button>
+                    </div>
+                </div>
+                <div style="width:320px;">
+                    <div style="font-weight:800; color:white; margin-bottom:6px;">Recent Notifications</div>
+                    <div id="notifList" style="max-height:160px; overflow:auto; color:#111;"></div>
+                </div>
+            </div>
+        </div>
+
         <div class="stats">
             <div class="stat-card">
                 <div class="stat-number" id="totalItems">0</div>
@@ -451,6 +469,7 @@
     <script>
         let currentRejectItem = null;
         let currentFilter = '';
+        let editingNotifId = null;
 
         function applySearch() {
             const q = document.getElementById('searchInput').value || '';
@@ -534,6 +553,92 @@
                 clgId: base.clgId || item.clgId || item.pid || (item.student && item.student.clgId) || "Unknown College ID",
                 year: base.year || item.year || (item.student && item.student.year) || "Unknown Year"
             };
+        }
+
+        // Notifications storage and rendering
+        function loadNotifications() {
+            const raw = JSON.parse(localStorage.getItem('notifications') || "[]");
+            const list = document.getElementById('notifList');
+            if (!list) return;
+            if (!raw.length) {
+                list.innerHTML = '<div style="color:#fff; opacity:0.9;">No notifications</div>';
+                return;
+            }
+            // Show newest first
+            list.innerHTML = raw.slice().reverse().map(n => {
+                return `<div style="background:#fff;padding:8px;border-radius:8px;margin-bottom:8px;color:#111;">
+                    <div style="font-weight:700;">${escapeHTML(n.message)}</div>
+                    <div style="font-size:12px;color:#555;margin-top:6px;">${escapeHTML(n.date)}${n.author ? ' • ' + escapeHTML(n.author) : ''}</div>
+                    <div style="text-align:right;margin-top:6px; display:flex; gap:6px; justify-content:flex-end;">
+                        <button class="back-nav" data-id="${escapeHTML(n.id)}" onclick="editNotification('${escapeHTML(n.id)}')">Edit</button>
+                        <button class="back-nav" data-id="${escapeHTML(n.id)}" onclick="deleteNotification('${escapeHTML(n.id)}')">Delete</button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function postNotification() {
+            const input = document.getElementById('notifInput');
+            const postBtn = document.getElementById('postNotifBtn');
+            if (!input) return;
+            const msg = input.value.trim();
+            if (!msg) { showToast('Enter a notification message.', 'danger'); return; }
+            const now = new Date().toLocaleString();
+            let author = 'faculty';
+            try { author = (JSON.parse(localStorage.getItem('currentUser') || '{}')).email || author; } catch(e){}
+
+            let data = JSON.parse(localStorage.getItem('notifications') || '[]');
+
+            if (editingNotifId) {
+                // Save existing
+                data = data.map(n => {
+                    if (String(n.id) === String(editingNotifId)) {
+                        return { ...n, message: msg, date: now, author };
+                    }
+                    return n;
+                });
+                localStorage.setItem('notifications', JSON.stringify(data));
+                editingNotifId = null;
+                if (postBtn) postBtn.textContent = 'Post Notification';
+                showToast('Notification updated.', 'success');
+            } else {
+                const id = 'n-' + Math.random().toString(36).substr(2, 9);
+                const notif = { id, message: msg, date: now, author };
+                data.push(notif);
+                localStorage.setItem('notifications', JSON.stringify(data));
+                showToast('Notification posted.', 'success');
+            }
+
+            input.value = '';
+            loadNotifications();
+        }
+
+        function editNotification(id) {
+            const data = JSON.parse(localStorage.getItem('notifications') || '[]');
+            const found = data.find(n => String(n.id) === String(id));
+            if (!found) { showToast('Notification not found.', 'danger'); return; }
+            const input = document.getElementById('notifInput');
+            const postBtn = document.getElementById('postNotifBtn');
+            if (input) input.value = found.message;
+            editingNotifId = found.id;
+            if (postBtn) postBtn.textContent = 'Save';
+            showToast('Editing notification. Make changes and click Save.', 'success');
+        }
+
+        function deleteNotification(id) {
+            let data = JSON.parse(localStorage.getItem('notifications') || '[]');
+            data = data.filter(n => String(n.id) !== String(id));
+            localStorage.setItem('notifications', JSON.stringify(data));
+            if (editingNotifId && String(editingNotifId) === String(id)) {
+                // cancel editing if deleted
+                editingNotifId = null;
+                const postBtn = document.getElementById('postNotifBtn');
+                if (postBtn) postBtn.textContent = 'Post Notification';
+                const input = document.getElementById('notifInput');
+                if (input) input.value = '';
+            }
+            loadNotifications();
+            showToast('Notification removed.', 'success');
         }
 
         function loadDashboard() {
@@ -800,6 +905,12 @@
         document.addEventListener("DOMContentLoaded", function () {
             verifyAuthentication();
             loadDashboard();
+            loadNotifications();
+
+            const postBtn = document.getElementById('postNotifBtn');
+            if (postBtn) postBtn.addEventListener('click', postNotification);
+            const clearBtn = document.getElementById('clearNotifBtn');
+            if (clearBtn) clearBtn.addEventListener('click', () => { const i = document.getElementById('notifInput'); if (i) i.value = ''; });
         });
     </script>
 </body>
