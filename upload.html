@@ -276,6 +276,11 @@
                     </div>
 
                     <div class="form-group">
+                        <label for="certDesc">Description (Optional)</label>
+                        <textarea id="certDesc" class="form-control" rows="4" placeholder="Brief description about this certificate, e.g., course name, topics covered, or other notes."></textarea>
+                    </div>
+
+                    <div class="form-group">
                         <label for="certFile">Upload File (PNG, JPG, PDF) *</label>
                         <input type="file" id="certFile" class="form-control" accept=".png, .jpg, .jpeg, .pdf" required onchange="validateFileSize(this)">
                         <small style="color: #666; display: block; margin-top: 5px;">Max file size: 1.5MB to save securely locally.</small>
@@ -382,6 +387,7 @@
             const issuer = document.getElementById('certIssuer').value.trim();
             const date = document.getElementById('certDate').value;
             const credUrl = document.getElementById('credUrl').value.trim();
+            const description = document.getElementById('certDesc') ? document.getElementById('certDesc').value.trim() : '';
 
             if (!base64FileData) {
                 showToast("Please wait for your file to finish loading, or upload a valid file.", "error");
@@ -394,6 +400,7 @@
                 title: title,
                 issuer: issuer,
                 date: date,
+                status: 'pending',
                 pid: currentPID,      // Crucial link parameter for dashboards
                 clgId: currentPID,    // Backup linkage matching dashboard schema
                 userEmail: currentUser.email, // Exact match tracking
@@ -410,6 +417,7 @@
                 credentialUrl: credUrl,
                 fileName: uploadedFileName,
                 fileData: base64FileData,
+                description: description,
                 uploadDate: new Date().toISOString()
             };
 
